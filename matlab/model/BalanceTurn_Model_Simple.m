@@ -1,0 +1,266 @@
+clc;
+clear;
+
+%轮足二级倒立摆结合转向拉格朗日建模
+
+%是否引入低阶变量
+is_thetaw = 0;
+
+syms t real; %定义微分时间
+syms Twl Twr Tjl Tjr; %定义输入力矩，[左右轮，左右关节]
+syms Mw R Jw D real; %定义驱动轮相关物理量，[轮质量，半径，惯量，轮距]
+syms Mll Mlr Hll Hlr Jll Jlr Pll Plr real; %定义腿杆相关物理量，[质量，长度，惯量，重心离轮轴位置]
+syms Mb Pb Jbpitch Jbyaw real; %定义机体相关物理量，[质量，重心离关节位置，pitch惯量，yaw惯量]
+syms x(t) fi(t) thetall(t) thetalr(t) thetab(t); %定义广义坐标系，[位移，旋转角，左腿倾角，右腿倾角，机体倾角]
+syms g; %定理重力
+
+%定义微分项
+dx = diff(x,t);
+dfi = diff(fi,t);
+dthetall = diff(thetall,t);
+dthetalr = diff(thetalr,t);
+dthetab = diff(thetab,t);
+
+%运动学引入
+xwl = x - D*fi/2;
+xwr = x + D*fi/2;
+zb = Hll/2*cos(thetall) + Hlr/2*cos(thetalr) + Pb*cos(thetab);
+xll = x - D*fi/2 + (Hlr*sin(thetalr)-Hll*sin(thetall))/D + Pll*sin(thetall);
+xlr = x + D*fi/2 - (Hlr*sin(thetalr)-Hll*sin(thetall))/D + Plr*sin(thetalr);
+zll = Pll*cos(thetall);
+zlr = Plr*cos(thetalr);
+xb = x + Hll/2*sin(thetall) + Hlr/D*sin(thetalr) + Pb*sin(thetab);
+
+%求运动学的一阶微分
+dxwl = dx - D*dfi/2;
+dxwr = dx + D*dfi/2;
+dzb = -0.5*Hll*dthetall*sin(thetall) - 0.5*Hlr*dthetalr*sin(thetalr) - Pb*dthetab*sin(thetab);
+dxll = dx - D*dfi/2 + (Hlr*dthetalr*cos(thetalr)-Hll*dthetall*cos(thetall))/D + Pll*dthetall*cos(thetall);
+dxlr = dx + D*dfi/2 - (Hlr*dthetalr*cos(thetalr)-Hll*dthetall*cos(thetall))/D + Plr*dthetalr*cos(thetalr);
+dzll = -Pll*dthetall*sin(thetall);
+dzlr = -Plr*dthetalr*sin(thetalr);
+dxb = dx+0.5*Hll*dthetall*cos(thetall)+0.5*Hlr*dthetalr*cos(thetalr)+Pb*dthetab*cos(thetab);
+
+%定义动能
+Kwrl = 0.5*Jw*(dxwl^2)/(R^2);
+Kwrr = 0.5*Jw*(dxwr^2)/(R^2);
+Kwpl = 0.5*Mw*(dxwl^2);
+Kwpr = 0.5*Mw*(dxwr^2);
+Klrl = 0.5*Jll*(dthetall^2);
+Klrr = 0.5*Jlr*(dthetalr^2);
+Klpl = 0.5*Mll*(dxll^2+dzll^2);
+Klpr = 0.5*Mlr*(dxlr^2+dzlr^2);
+Kbrpitch = 0.5*Jbpitch*(dthetab^2);
+Kbryaw = 0.5*Jbyaw*(dfi^2);
+Kbp = 0.5*Mb*(dxb^2+dzb^2);
+
+%定义势能
+Pell = Mll*g*zll;
+Pelr = Mlr*g*zlr;
+Peb = Mb*g*zb;
+
+%拉格朗日函数，并使用符号替代一阶求导项
+syms x_dot(t) fi_dot(t) thetall_dot(t) thetalr_dot(t) thetab_dot(t);
+syms x_ddot(t) fi_ddot(t) thetall_ddot(t) thetalr_ddot(t) thetab_ddot(t);
+
+%状态变量微分
+state_dot = [x_dot,fi_dot,thetall_dot,thetalr_dot,thetab_dot,x_ddot,fi_ddot,thetall_ddot,thetalr_ddot,thetab_ddot];
+
+%构建全局拉格朗日函数
+L_global = Kwrl+Kwrr+Kwpl+Kwpr+Klrl+Klrr+Klpl+Klpr+Kbrpitch+Kbryaw+Kbp - Pell - Pelr - Peb;
+L_global = subs(L_global,diff(x,t),x_dot);
+L_global = subs(L_global,diff(fi,t),fi_dot);
+L_global = subs(L_global,diff(thetall,t),thetall_dot);
+L_global = subs(L_global,diff(thetalr,t),thetalr_dot);
+L_global = subs(L_global,diff(thetab,t),thetab_dot);
+L_global = simplify(L_global);
+pretty(L_global);
+
+%x
+L_xdot = functionalDerivative(L_global, x_dot);
+L_xdot_t = diff(L_xdot, t);
+
+L_xdot_t = subs(L_xdot_t,diff(x,t),x_dot);
+L_xdot_t = subs(L_xdot_t,diff(fi,t),fi_dot);
+L_xdot_t = subs(L_xdot_t,diff(thetall,t),thetall_dot);
+L_xdot_t = subs(L_xdot_t,diff(thetalr,t),thetalr_dot);
+L_xdot_t = subs(L_xdot_t,diff(thetab,t),thetab_dot);
+
+L_xdot_t = subs(L_xdot_t,diff(x_dot,t),x_ddot);
+L_xdot_t = subs(L_xdot_t,diff(fi_dot,t),fi_ddot);
+L_xdot_t = subs(L_xdot_t,diff(thetall_dot,t),thetall_ddot);
+L_xdot_t = subs(L_xdot_t,diff(thetalr_dot,t),thetalr_ddot);
+L_xdot_t = subs(L_xdot_t,diff(thetab_dot,t),thetab_ddot);
+
+L_xdot_t = simplify(L_xdot_t);
+L_xdot_t = collect(L_xdot_t,state_dot);
+L_x = functionalDerivative(L_global,x);
+
+%fi
+L_fidot = functionalDerivative(L_global, fi_dot);
+L_fidot_t = diff(L_fidot, t);
+
+L_fidot_t = subs(L_fidot_t,diff(x,t),x_dot);
+L_fidot_t = subs(L_fidot_t,diff(fi,t),fi_dot);
+L_fidot_t = subs(L_fidot_t,diff(thetall,t),thetall_dot);
+L_fidot_t = subs(L_fidot_t,diff(thetalr,t),thetalr_dot);
+L_fidot_t = subs(L_fidot_t,diff(thetab,t),thetab_dot);
+
+L_fidot_t = subs(L_fidot_t,diff(x_dot,t),x_ddot);
+L_fidot_t = subs(L_fidot_t,diff(fi_dot,t),fi_ddot);
+L_fidot_t = subs(L_fidot_t,diff(thetall_dot,t),thetall_ddot);
+L_fidot_t = subs(L_fidot_t,diff(thetalr_dot,t),thetalr_ddot);
+L_fidot_t = subs(L_fidot_t,diff(thetab_dot,t),thetab_ddot);
+
+L_fidot_t = simplify(L_fidot_t);
+L_fidot_t = collect(L_fidot_t,state_dot);
+L_fi = functionalDerivative(L_global,fi);
+
+
+%thetall
+L_thetalldot = functionalDerivative(L_global, thetall_dot);
+L_thetalldot_t = diff(L_thetalldot, t);
+
+L_thetalldot_t = subs(L_thetalldot_t,diff(x,t),x_dot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(fi,t),fi_dot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetall,t),thetall_dot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetalr,t),thetalr_dot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetab,t),thetab_dot);
+
+L_thetalldot_t = subs(L_thetalldot_t,diff(x_dot,t),x_ddot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(fi_dot,t),fi_ddot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetall_dot,t),thetall_ddot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetalr_dot,t),thetalr_ddot);
+L_thetalldot_t = subs(L_thetalldot_t,diff(thetab_dot,t),thetab_ddot);
+
+L_thetalldot_t = simplify(L_thetalldot_t);
+L_thetalldot_t = collect(L_thetalldot_t,state_dot);
+L_thetall = functionalDerivative(L_global,thetall);
+
+%thetalr
+L_thetalrdot = functionalDerivative(L_global, thetalr_dot);
+L_thetalrdot_t = diff(L_thetalrdot, t);
+
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(x,t),x_dot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(fi,t),fi_dot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetall,t),thetall_dot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetalr,t),thetalr_dot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetab,t),thetab_dot);
+
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(x_dot,t),x_ddot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(fi_dot,t),fi_ddot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetall_dot,t),thetall_ddot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetalr_dot,t),thetalr_ddot);
+L_thetalrdot_t = subs(L_thetalrdot_t,diff(thetab_dot,t),thetab_ddot);
+
+L_thetalrdot_t = simplify(L_thetalrdot_t);
+L_thetalrdot_t = collect(L_thetalrdot_t,state_dot);
+L_thetalr = functionalDerivative(L_global,thetalr);
+
+%thetab
+L_thetabdot = functionalDerivative(L_global, thetab_dot);
+L_thetabdot_t = diff(L_thetabdot, t);
+
+L_thetabdot_t = subs(L_thetabdot_t,diff(x,t),x_dot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(fi,t),fi_dot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetall,t),thetall_dot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetalr,t),thetalr_dot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetab,t),thetab_dot);
+
+L_thetabdot_t = subs(L_thetabdot_t,diff(x_dot,t),x_ddot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(fi_dot,t),fi_ddot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetall_dot,t),thetall_ddot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetalr_dot,t),thetalr_ddot);
+L_thetabdot_t = subs(L_thetabdot_t,diff(thetab_dot,t),thetab_ddot);
+
+L_thetabdot_t = simplify(L_thetabdot_t);
+L_thetabdot_t = collect(L_thetabdot_t,state_dot);
+L_thetab = functionalDerivative(L_global,thetab);
+
+%动力学方程左侧
+left_x = L_xdot_t - L_x;
+left_x = simplify(left_x);
+left_x = collect(left_x,state_dot);
+
+left_fi = L_fidot_t - L_fi;
+left_fi = simplify(left_fi);
+left_fi = collect(left_fi,state_dot);
+
+left_thetall = L_thetalldot_t - L_thetall;
+left_thetall = simplify(left_thetall);
+left_thetall = collect(left_thetall,state_dot);
+
+left_thetalr = L_thetalrdot_t - L_thetalr;
+left_thetalr = simplify(left_thetalr);
+left_thetalr = collect(left_thetalr,state_dot);
+
+left_thetab = L_thetabdot_t - L_thetab;
+left_thetab = simplify(left_thetab);
+left_thetab = collect(left_thetab,state_dot);
+
+%线性化方程
+left_x = subs(left_x,[cos(thetall(t)) cos(thetalr(t)) cos(thetab(t))],[1 1 1]);
+left_x = subs(left_x,[sin(thetall(t)) sin(thetalr(t)) sin(thetab(t))],[thetall(t) thetalr(t) thetab(t)]);
+left_x = subs(left_x,[thetall_dot(t) thetalr_dot(t) thetab_dot(t)],[0 0 0]);
+
+left_fi = subs(left_fi,[cos(thetall(t)) cos(thetalr(t)) cos(thetab(t))],[1 1 1]);
+left_fi = subs(left_fi,[sin(thetall(t)) sin(thetalr(t)) sin(thetab(t))],[thetall(t) thetalr(t) thetab(t)]);
+left_fi = subs(left_fi,[thetall_dot(t) thetalr_dot(t) thetab_dot(t)],[0 0 0]);
+
+left_thetall = subs(left_thetall,[cos(thetall(t)) cos(thetalr(t)) cos(thetab(t))],[1 1 1]);
+left_thetall = subs(left_thetall,[sin(thetall(t)) sin(thetalr(t)) sin(thetab(t))],[thetall(t) thetalr(t) thetab(t)]);
+left_thetall = subs(left_thetall,[thetall_dot(t) thetalr_dot(t) thetab_dot(t)],[0 0 0]);
+
+left_thetalr = subs(left_thetalr,[cos(thetall(t)) cos(thetalr(t)) cos(thetab(t))],[1 1 1]);
+left_thetalr = subs(left_thetalr,[sin(thetall(t)) sin(thetalr(t)) sin(thetab(t))],[thetall(t) thetalr(t) thetab(t)]);
+left_thetalr = subs(left_thetalr,[thetall_dot(t) thetalr_dot(t) thetab_dot(t)],[0 0 0]);
+
+left_thetab = subs(left_thetab,[cos(thetall(t)) cos(thetalr(t)) cos(thetab(t))],[1 1 1]);
+left_thetab = subs(left_thetab,[sin(thetall(t)) sin(thetalr(t)) sin(thetab(t))],[thetall(t) thetalr(t) thetab(t)]);
+left_thetab = subs(left_thetab,[thetall_dot(t) thetalr_dot(t) thetab_dot(t)],[0 0 0]);
+
+% disp(L_global);
+% disp(left_x);
+% disp(left_fi);
+% disp(left_thetall);
+% disp(left_thetalr);
+% disp(left_thetab);
+
+% 整理动力学方程成基本形式
+% M[q_ddot] + V[q_dot,q] + G[q] = J*T
+% 为了线性化，去除离心力和哥氏力矩阵
+vars = [x(t) fi(t) thetall(t) thetalr(t) thetab(t) x_ddot(t) fi_ddot(t) thetall_ddot(t) thetalr_ddot(t) thetab_ddot(t)];
+values = [0 0 0 0 0 0 0 0 0 0];
+
+syms n;
+n = eye(10);
+% G = zeros(5);
+% M = zeros(5);
+for i = 1:5
+    values = n(i,:);
+    G(1,i) = subs(left_x,vars,values);
+    G(2,i) = subs(left_fi,vars,values);
+    G(3,i) = subs(left_thetall,vars,values);
+    G(4,i) = subs(left_thetalr,vars,values);
+    G(5,i) = subs(left_thetab,vars,values);
+end
+
+for i = 1:5
+    values = n(5+i,:);
+    M(1,i) = subs(left_x,vars,values);
+    M(2,i) = subs(left_fi,vars,values);
+    M(3,i) = subs(left_thetall,vars,values);
+    M(4,i) = subs(left_thetalr,vars,values);
+    M(5,i) = subs(left_thetab,vars,values);
+end
+
+
+J = [1/R,1/R,0,0;...
+     -0.5*D/R,0.5*D/R,0,0;...
+     -1,0,1,0;...
+     0,-1,0,1;...
+     0,0,-1,-1];
+
+disp(G);
+disp(M);
+disp(J);

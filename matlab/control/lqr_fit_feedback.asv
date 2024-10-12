@@ -1,0 +1,5 @@
+function feedback = lqr_fit_feedback(H_array,K_array,title_name,variant_name)
+    feedback = fit_feedback(H_array,K_array,3);
+    disp(title_name);
+    f1 = sprintf(strcat(variant_name,))
+end

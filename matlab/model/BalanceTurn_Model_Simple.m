@@ -9,7 +9,7 @@ is_thetaw = 0;
 syms t real; %定义微分时间
 syms Twl Twr Tjl Tjr; %定义输入力矩，[左右轮，左右关节]
 syms Mw R Jw D real; %定义驱动轮相关物理量，[轮质量，半径，惯量，轮距]
-syms Mll Mlr Hll Hlr Jll Jlr Pll Plr real; %定义腿杆相关物理量，[质量，长度，惯量，重心离轮轴位置]
+syms Ml Mr Hll Hlr Jll Jlr Pll Plr real; %定义腿杆相关物理量，[质量，长度，惯量，重心离轮轴位置]
 syms Mb Pb Jbpitch Jbyaw real; %定义机体相关物理量，[质量，重心离关节位置，pitch惯量，yaw惯量]
 syms x(t) fi(t) thetall(t) thetalr(t) thetab(t); %定义广义坐标系，[位移，旋转角，左腿倾角，右腿倾角，机体倾角]
 syms g; %定理重力
@@ -48,15 +48,15 @@ Kwpl = 0.5*Mw*(dxwl^2);
 Kwpr = 0.5*Mw*(dxwr^2);
 Klrl = 0.5*Jll*(dthetall^2);
 Klrr = 0.5*Jlr*(dthetalr^2);
-Klpl = 0.5*Mll*(dxll^2+dzll^2);
-Klpr = 0.5*Mlr*(dxlr^2+dzlr^2);
+Klpl = 0.5*Ml*(dxll^2+dzll^2);
+Klpr = 0.5*Mr*(dxlr^2+dzlr^2);
 Kbrpitch = 0.5*Jbpitch*(dthetab^2);
 Kbryaw = 0.5*Jbyaw*(dfi^2);
 Kbp = 0.5*Mb*(dxb^2+dzb^2);
 
 %定义势能
-Pell = Mll*g*zll;
-Pelr = Mlr*g*zlr;
+Pell = Ml*g*zll;
+Pelr = Mr*g*zlr;
 Peb = Mb*g*zb;
 
 %拉格朗日函数，并使用符号替代一阶求导项
@@ -261,6 +261,9 @@ J = [1/R,1/R,0,0;...
      0,-1,0,1;...
      0,0,-1,-1];
 
-disp(G);
-disp(M);
-disp(J);
+% 获取当前脚本的完整路径
+currentFile = mfilename('fullpath');
+
+% 使用fileparts分离出路径部分
+[currentPath,~,~] = fileparts(currentFile);
+save(strcat(currentPath,'/BalanceTurn_Model_Simple.mat'), 'M', 'G', 'J');

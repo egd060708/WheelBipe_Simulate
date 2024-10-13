@@ -1,0 +1,3 @@
+[submodule "webots/robot_modules"]
+	path = webots/robot_modules
+	url = https://github.com/egd060708/robot_models.git

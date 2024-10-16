@@ -46,25 +46,25 @@ for H1_=bottom:step:top
     Mr_ = 2*(Mlinks(1)+Mlinks(2));
     Hll_ = H1_;
     Hlr_ = H1_;
-    Pll_ = H1_*(1-k_);
-    Plr_ = H1_*(1-k_);
+    Pll_ = H1_*(1-k);
+    Plr_ = H1_*(1-k);
     Jll_ = (Mlinks(2)*2*((Llinks(3)/2).^2) + Mlinks(1)*(2*(Llinks(1)/2).^2 + Llinks(2).^2 / 2) + Mlinks(2)*(2*(Llinks(1)/2).^2 + 2*Llinks(1).^2))- Ml_ * (k_*Hll_).^2;
     Jlr_ = (Mlinks(2)*2*((Llinks(3)/2).^2) + Mlinks(1)*(2*(Llinks(1)/2).^2 + Llinks(2).^2 / 2) + Mlinks(2)*(2*(Llinks(1)/2).^2 + 2*Llinks(1).^2))- Mr_ * (k_*Hlr_).^2; 
+    
     % 被替代的参数
     symbolic_param = [Mw R Jw D Ml Mr Hll Hlr Jll Jlr Pll Plr Mb Pb Jbpitch Jbyaw g];
     % 用于替代的实参
     real_param = [Mw_ R_ Jw_ D_ Ml_ Mr_ Hll_ Hlr_ Jll_ Jlr_ Pll_ Plr_ Mb_ Pb_ Jbpitch_ Jbyaw_ g_];
     
     %参数实例化
-    X=subs(M,symbolic_param,real_param);
-    X=vpa(X,7);%规范小数位
-    Y=subs(G,symbolic_param,real_param);
-    Y=vpa(Y,7);
-    Z=subs(J,R,R_);
-    Z=vpa(Z,7);
+    M=subs(M,symbolic_param,real_param);
+    M=vpa(M,7);%规范小数位
+    G=subs(G,symbolic_param,real_param);
+    G=vpa(G,7);
+    J=subs(J,R,R_);
     %传递函数
-    H=X \ (-Y);
-    I=X \ Z;
+    H=M \ (-G);
+    I=M \ J;
     H=double(H);
     I=double(I);
     lqr_A = zeros(xNum,xNum);

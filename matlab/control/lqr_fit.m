@@ -60,7 +60,7 @@ for H1_=bottom:step:top
     X=vpa(X,7);%规范小数位
     Y=subs(G,symbolic_param,real_param);
     Y=vpa(Y,7);
-    Z=subs(J,R,R_);
+    Z=subs(J,[R D],[R_ D_]);
     Z=vpa(Z,7);
     %传递函数
     H=X \ (-Y);

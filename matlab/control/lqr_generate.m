@@ -9,13 +9,14 @@ currentFile = mfilename('fullpath');
 % 使用fileparts分离出路径部分
 [currentPath,~,~] = fileparts(currentFile);
 % load(strcat(currentPath,'/../model/BalanceTurn_Model.mat'));
-load('D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model.mat')
+load('D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model_Simple.mat')
 syms t real; %定义微分时间
 syms Twl Twr Tjl Tjr; %定义输入力矩，[左右轮，左右关节]
 syms Mw R Jw D real; %定义驱动轮相关物理量，[轮质量，半径，惯量，轮距]
 syms Ml Mr Hll Hlr Jll Jlr Pll Plr real; %定义腿杆相关物理量，[质量，长度，惯量，重心离轮轴位置]
 syms Mb Pb Jbpitch Jbyaw real; %定义机体相关物理量，[质量，重心离关节位置，pitch惯量，yaw惯量]
-syms thetawl(t) thetawr(t) thetall(t) thetalr(t) thetab(t); %定义广义坐标系，[位移，旋转角，左腿倾角，右腿倾角，机体倾角]
+% syms thetawl(t) thetawr(t) thetall(t) thetalr(t) thetab(t); %定义广义坐标系，[位移，旋转角，左腿倾角，右腿倾角，机体倾角]
+syms x(t) fi(t) thetall(t) thetalr(t) thetab(t); %定义广义坐标系，[位移，旋转角，左腿倾角，右腿倾角，机体倾角]
 syms g real; %定义重力加速度
 
 % 导入物理参数
@@ -42,7 +43,7 @@ X=subs(M,symbolic_param,real_param);
 X=vpa(X,7);%规范小数位
 Y=subs(G,symbolic_param,real_param);
 Y=vpa(Y,7);
-Z=subs(J,R,R_);
+Z=subs(J,[R D],[R_ D_]);
 Z=vpa(Z,7);
 %传递函数
 H=X \ (-Y);
@@ -88,19 +89,37 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
     lqr_Q=eye(10);
     lqr_R=eye(4);
     
+    % 转向模型参数
+    % lqr_Q(1,1) = 0.00001;
+    % lqr_Q(2,2) = 10;
+    % lqr_Q(3,3) = 0.00001;
+    % lqr_Q(4,4) = 10;
+    % lqr_Q(5,5) = 10;
+    % lqr_Q(6,6) = 75;
+    % lqr_Q(7,7) = 10;
+    % lqr_Q(8,8) = 75;
+    % lqr_Q(9,9) = 5000;
+    % lqr_Q(10,10) = 1;
+    % 
+    % lqr_R(1,1) = 1;
+    % lqr_R(2,2) = 1;
+    % lqr_R(3,3) = 1;
+    % lqr_R(4,4) = 1;
+
+    % 简化转向模型的参数
     lqr_Q(1,1) = 0.00001;
-    lqr_Q(2,2) = 10;
+    lqr_Q(2,2) = 40;
     lqr_Q(3,3) = 0.00001;
-    lqr_Q(4,4) = 10;
-    lqr_Q(5,5) = 10;
-    lqr_Q(6,6) = 75;
-    lqr_Q(7,7) = 10;
-    lqr_Q(8,8) = 75;
+    lqr_Q(4,4) = 20;
+    lqr_Q(5,5) = 1;
+    lqr_Q(6,6) = 0.1;
+    lqr_Q(7,7) = 1;
+    lqr_Q(8,8) = 0.1;
     lqr_Q(9,9) = 5000;
     lqr_Q(10,10) = 1;
 
-    lqr_R(1,1) = 1;
-    lqr_R(2,2) = 1;
+    lqr_R(1,1) = 5;
+    lqr_R(2,2) = 5;
     lqr_R(3,3) = 1;
     lqr_R(4,4) = 1;
     
@@ -124,7 +143,7 @@ Ts = 0.002;
 
 %取出拟合lqr参数
 %[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,strcat(currentPath,'/../model/BalanceTurn_Model.mat'));
-[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,'D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model.mat');
+[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,'D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model_Simple.mat');
 
 xNum = size(lqr_Q,1);%获取行数，也就是状态变量个数
 uNum = size(lqr_R,2);%获取列数，也就是输入变量个数

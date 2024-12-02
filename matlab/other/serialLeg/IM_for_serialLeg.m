@@ -1,7 +1,7 @@
 function [Pos,IM] = IM_for_serialLeg(Llinks,Mlinks,Ilinks,eqLength,eqAngle)
 
 Pos = zeros(2);
-[thigh,knee] = IK_for_serialLeg(Llinks,eqLength,eqAngle);
+[knee,thigh] = IK_for_serialLeg1(Llinks,eqLength,eqAngle);
 
 PosLinks = zeros(4,2);
 PosLinks(1,1) = -Llinks(1)*0.5*sin(thigh);
@@ -21,7 +21,7 @@ IM = 0;
 eqX = eqLength*sin(eqAngle);
 eqZ = eqLength*cos(eqAngle);
 for i=1:1:4
-    IM = IM + Ilinks(i) + Mlinks(i)*((eqX-PosLinks(i,1))^2+(eqZ-PosLinks(i,2))^2);
+    IM = IM + Ilinks(i) + Mlinks(i)*((eqX-PosLinks(i,1)).^2+(eqZ-PosLinks(i,2)).^2);
 end
 
 end

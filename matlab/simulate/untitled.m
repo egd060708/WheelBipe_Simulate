@@ -67,28 +67,50 @@ Llinks2 = [0.212,0.07,0.212,0.07,0.245-0.07];
 % disp(tf);
 % disp(tb);
 
+
+
+% eqLength = 0.13:0.01:0.4;
+% num = size(eqLength,2);
+% af = zeros(1,num);
+% ab = zeros(1,num);
+% tf = zeros(1,num);
+% tb = zeros(1,num);
+% for i=1:1:num
+%     [af(1,i),ab(1,i)] = IK_for_serialLeg1(Llinks1,eqLength(i),1);
+%     [tf(1,i),tb(1,i)] = IKJ_for_serialLeg1(Llinks1,0,-10,af(1,i),ab(1,i));
+% end
+% 
+% figure;
+% plot(eqLength,af,eqLength,ab);
+% figure;
+% plot(eqLength,tf,eqLength,tb);
+% 
+% for i=1:1:num
+%     [af(1,i),ab(1,i)] = IK_for_serialLeg2(Llinks2,eqLength(i),1);
+%     [tf(1,i),tb(1,i)] = IKJ_for_serialLeg2(Llinks2,0,-10,af(1,i),ab(1,i));
+% end
+% 
+% figure;
+% plot(eqLength,af,eqLength,ab);
+% figure;
+% plot(eqLength,tf,eqLength,tb);
+
+
+Llinks = [0.212,0.245,0.212,0.07];
+Mlinks = [0.251,0.221,0.111,0.056];
+Ilinks = [860.754e-6,943.846e-6,314.629e-6,30.497e-6];
 eqLength = 0.13:0.01:0.4;
 num = size(eqLength,2);
-af = zeros(1,num);
-ab = zeros(1,num);
-tf = zeros(1,num);
-tb = zeros(1,num);
+Pos = zeros(2,num);
+IM = zeros(1,num);
 for i=1:1:num
-    [af(1,i),ab(1,i)] = IK_for_serialLeg1(Llinks1,eqLength(i),1);
-    [tf(1,i),tb(1,i)] = IKJ_for_serialLeg1(Llinks1,0,-10,af(1,i),ab(1,i));
+    [p,m] = IM_for_serialLeg(Llinks,Mlinks,Ilinks,eqLength(i),0);
+    Pos(1,i) = p(1);
+    Pos(2,i) = p(2);
+    IM(i) = m;
 end
 
 figure;
-plot(eqLength,af,eqLength,ab);
+plot(eqLength,Pos);
 figure;
-plot(eqLength,tf,eqLength,tb);
-
-for i=1:1:num
-    [af(1,i),ab(1,i)] = IK_for_serialLeg2(Llinks2,eqLength(i),1);
-    [tf(1,i),tb(1,i)] = IKJ_for_serialLeg2(Llinks2,0,-10,af(1,i),ab(1,i));
-end
-
-figure;
-plot(eqLength,af,eqLength,ab);
-figure;
-plot(eqLength,tf,eqLength,tb);
+plot(eqLength,IM);

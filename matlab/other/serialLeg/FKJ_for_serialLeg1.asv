@@ -1,0 +1,6 @@
+function [Fx,Fz] = FKJ_for_serialLeg1(Llinks,tauf,taub,anglef,angleb)
+
+% temp1 = Llinks(1)*sin(angleb-anglef);
+% temp2 = Llinks(2)*sin(angleb-anglef);
+J = [-Llinks(1)*cos(angleb),-Llinks(2)*cos(anglef);Llinks(1)*sin(angleb),Llinks(2)]
+end

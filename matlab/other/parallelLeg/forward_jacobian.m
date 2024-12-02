@@ -1,4 +1,4 @@
-function [Fx,Fy]=inverse_jacobian(tau1,tau2,a1,a2)
+function [Fx,Fy]=forward_jacobian(tau1,tau2,a1,a2)
 %逆向雅可比求解
 [L1,L2,L3,L4,L5]=deal(0.15,0.288,0.288,0.15,0.15);
 A = (L1.^2)*((sin(a2)-sin(a1)).^2)+(L5+L1*(cos(a1)-cos(a2))).^2;

@@ -1,0 +1,10 @@
+function [anglef,angleb] = IK_for_serialLeg2(Llinks,eqLength,eqAngle)
+
+a1 = eqAngle + acos((eqLength.^2+Llinks(1).^2-(Llinks(4)+Llinks(5)).^2)/(2*eqLength*Llinks(1)));
+L7 = sqrt(Llinks(1).^2+Llinks(4).^2-Llinks(4)/(Llinks(4)+Llinks(5))*(Llinks(1).^2+(Llinks(4)+Llinks(5)).^2-eqLength.^2));
+ap = acos((eqLength.^2+L7.^2-Llinks(5).^2)/(2*eqLength*L7));
+a2 = ap+eqAngle-acos((Llinks(2).^2+L7.^2-Llinks(3).^2)/(2*Llinks(2)*L7));
+anglef = a2;
+angleb = a1;
+
+end

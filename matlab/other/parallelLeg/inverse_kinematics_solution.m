@@ -1,5 +1,5 @@
-function [Alpha1,Alpha2] = inverse_kinematics_solution(x,z,Llinks)
-[L1,L2,L3,L4,L5]=deal(Llinks(2),Llinks(3),Llinks(3),Llinks(2),Llinks(1));
+function [Alpha1,Alpha2] = inverse_kinematics_solution(x,z)
+[L1,L2,L3,L4,L5]=deal(0.15,0.288,0.288,0.15,0.15);
 if (x+L5/2)<0
     Alpha2=pi-atan(-z/(-x-L5/2))+acos((L4^2-L3^2+(-0.5*L5-x)^2+z^2)/(2*L1*sqrt((-0.5*L5-x)^2+z^2)));
 else

@@ -37,7 +37,7 @@ clear;
 Llinks1 = [0.212,0.245];
 Llinks2 = [0.212,0.07,0.212,0.07,0.245-0.07];
 
-% [x,z] = FK_for_serialLeg1(Llinks1,-1,0.5);
+% [x,z] = FK_for_serialLeg1(Llinks1,-1.3,1.2);
 % disp(x);
 % disp(z);
 % 
@@ -103,10 +103,12 @@ eqLength = 0.13:0.01:0.4;
 num = size(eqLength,2);
 Pos = zeros(2,num);
 IM = zeros(1,num);
+IMangle = zeros(1,num);
 for i=1:1:num
     [p,m] = IM_for_serialLeg(Llinks,Mlinks,Ilinks,eqLength(i),0);
     Pos(1,i) = p(1);
     Pos(2,i) = p(2);
+    IMangle(1,i) = atan2(-p(1),-p(2));
     IM(i) = m;
 end
 
@@ -114,3 +116,5 @@ figure;
 plot(eqLength,Pos);
 figure;
 plot(eqLength,IM);
+figure;
+plot(eqLength,IMangle);

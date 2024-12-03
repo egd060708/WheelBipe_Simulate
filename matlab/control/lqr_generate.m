@@ -21,6 +21,7 @@ syms g real; %定义重力加速度
 
 % 导入物理参数
 webots_param;
+robot_type = 1;% 0为并联腿，1为串联腿
 % 求解部分物理参数
 Lleg = 0.3;
 [Pleg,Mleg,Ileg] = leg_param_cal(Lleg,Llinks,Ilinks,Mlinks);
@@ -108,20 +109,20 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
 
     % 简化转向模型的参数
     lqr_Q(1,1) = 0.00001;
-    lqr_Q(2,2) = 40;
+    lqr_Q(2,2) = 50;
     lqr_Q(3,3) = 0.00001;
-    lqr_Q(4,4) = 20;
-    lqr_Q(5,5) = 1;
-    lqr_Q(6,6) = 0.1;
-    lqr_Q(7,7) = 1;
-    lqr_Q(8,8) = 0.1;
-    lqr_Q(9,9) = 5000;
-    lqr_Q(10,10) = 1;
+    lqr_Q(4,4) = 25;
+    lqr_Q(5,5) = 0.5;
+    lqr_Q(6,6) = 0.05;
+    lqr_Q(7,7) = 0.5;
+    lqr_Q(8,8) = 0.05;
+    lqr_Q(9,9) = 30000;
+    lqr_Q(10,10) = 0.5;
 
-    lqr_R(1,1) = 5;
-    lqr_R(2,2) = 5;
-    lqr_R(3,3) = 1;
-    lqr_R(4,4) = 1;
+    lqr_R(1,1) = 4;
+    lqr_R(2,2) = 4;
+    lqr_R(3,3) = 0.5;
+    lqr_R(4,4) = 0.5;
     
     K=dlqr(sys_d.A,sys_d.B,lqr_Q,lqr_R);
 else
@@ -136,14 +137,14 @@ fprintf("\n");
 %% 拟合lqr
 clc;
 %设定轮杆长度
-h_top=0.35;
-h_bottom=0.14;
+h_top=0.4;
+h_bottom=0.13;
 h_step=0.01;
 Ts = 0.002;
 
 %取出拟合lqr参数
 %[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,strcat(currentPath,'/../model/BalanceTurn_Model.mat'));
-[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,'D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model_Simple.mat');
+[K_s,H_s,C_s] = lqr_fit (Ts,h_top,h_bottom,h_step,lqr_Q,lqr_R,'D:/Git_Project/github/WheelBipe_Simulate/matlab/model/BalanceTurn_Model_Simple.mat',robot_type);
 
 xNum = size(lqr_Q,1);%获取行数，也就是状态变量个数
 uNum = size(lqr_R,2);%获取列数，也就是输入变量个数

@@ -37,16 +37,13 @@ for H1_=bottom:step:top
         Plr_ = H1_*(1-k_);
         Jll_ = (Mlinks(2)*2*((Llinks(3)/2).^2) + Mlinks(1)*(2*(Llinks(1)/2).^2 + Llinks(2).^2 / 2) + Mlinks(2)*(2*(Llinks(1)/2).^2 + 2*Llinks(1).^2))- Ml_ * (k_*Hll_).^2;
         Jlr_ = (Mlinks(2)*2*((Llinks(3)/2).^2) + Mlinks(1)*(2*(Llinks(1)/2).^2 + Llinks(2).^2 / 2) + Mlinks(2)*(2*(Llinks(1)/2).^2 + 2*Llinks(1).^2))- Mr_ * (k_*Hlr_).^2; 
-    else if robot_type == 1
+    else
         Ml_ = Mlinks(1)+Mlinks(2)+Mlinks(3)+Mlinks(4);
         Mr_ = Ml_;
         Hll_ = H1_;
         Hlr_ = H1_;
         [pim,jm] = IM_for_serialLeg(Llinks,Mlinks,Ilinks,H1_,0);
-        Pll_ = H1_+pim(2);
-        Plr_ = Pll_;
-        Jll_ = jm;
-        Jlr_ = Jll_;
+        Pll_ = 
     end
     % 被替代的参数
     symbolic_param = [Mw R Jw D Ml Mr Hll Hlr Jll Jlr Pll Plr Mb Pb Jbpitch Jbyaw g];

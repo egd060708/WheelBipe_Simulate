@@ -7,3 +7,6 @@
 [submodule "libs/other"]
 	path = libs/other
 	url = https://github.com/egd060708/other_module.git
+[submodule "libs/controller_module"]
+	path = libs/controller_module
+	url = https://github.com/egd060708/controller_module.git

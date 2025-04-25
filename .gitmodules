@@ -4,3 +4,6 @@
 [submodule "libs/observer"]
 	path = libs/observer
 	url = https://github.com/egd060708/observer_module.git
+[submodule "libs/other"]
+	path = libs/other
+	url = https://github.com/egd060708/other_module.git

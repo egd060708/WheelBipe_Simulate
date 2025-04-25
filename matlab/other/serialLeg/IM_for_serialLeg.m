@@ -18,10 +18,10 @@ Pos(1) = (PosLinks(1,1)*Mlinks(1) + PosLinks(2,1)*Mlinks(2) + PosLinks(3,1)*Mlin
 Pos(2) = (PosLinks(1,2)*Mlinks(1) + PosLinks(2,2)*Mlinks(2) + PosLinks(3,2)*Mlinks(3) + PosLinks(4,2)*Mlinks(4))/Mall;
 
 IM = 0;
-eqX = eqLength*sin(eqAngle);
-eqZ = eqLength*cos(eqAngle);
+% eqX = eqLength*sin(eqAngle);
+% eqZ = eqLength*cos(eqAngle);
 for i=1:1:4
-    IM = IM + Ilinks(i) + Mlinks(i)*((eqX-PosLinks(i,1)).^2+(eqZ-PosLinks(i,2)).^2);
+    IM = IM + Ilinks(i) + Mlinks(i)*((Pos(1)-PosLinks(i,1)).^2+(Pos(2)-PosLinks(i,2)).^2);
 end
 
 end

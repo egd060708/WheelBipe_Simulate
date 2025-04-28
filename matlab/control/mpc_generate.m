@@ -10,7 +10,9 @@ u_num = 4;
 h_top=0.4;
 h_bottom=0.13;
 h_step=0.01;
-Ts = 0.005;
+% Ts = 0.02;%qpOASES
+Ts = 0.005;%tinyMPC
+% Ts = 0.02;%qp++
 robot_type = 1;
 
 %取出拟合mpc模型参数

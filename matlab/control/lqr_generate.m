@@ -76,12 +76,13 @@ B_ss = double(B_ss);
 C_ss = eye(10);
 D_ss = zeros(10,4);
 
-% disp(A_ss);
-% disp(B_ss);
-
 %系统离散化
 sys_c = ss(A_ss, B_ss, C_ss, D_ss);
 sys_d = c2d(sys_c, Ts);
+
+
+disp(sys_d.A);
+disp(sys_d.B);
 
 %% 单层lqr
 %clc;

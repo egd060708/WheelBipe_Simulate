@@ -131,11 +131,11 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
     lqr_Q(2,2) = rho + 50;
     lqr_Q(3,3) = rho + 0.00001;
     lqr_Q(4,4) = rho + 25;
-    lqr_Q(5,5) = rho + 10;
+    lqr_Q(5,5) = rho + 2;
     lqr_Q(6,6) = rho + 0.05;
-    lqr_Q(7,7) = rho + 10;
+    lqr_Q(7,7) = rho + 2;
     lqr_Q(8,8) = rho + 0.05;
-    lqr_Q(9,9) = rho + 10000;
+    lqr_Q(9,9) = rho + 4000;
     lqr_Q(10,10) = rho + 0.5;
 
     lqr_R(1,1) = rho + 5;

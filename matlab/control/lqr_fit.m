@@ -1,5 +1,5 @@
 %lqr线性化函数(返回参数：lqr参数，对应轮杆高度，参数组数）
-function [K_,H_,C_]=lqr_fit(Ts,top,bottom,step,lqr_Q,lqr_R,model_name,robot_type)
+function [K_,P_,H_,C_]=lqr_fit(Ts,top,bottom,step,lqr_Q,lqr_R,model_name,robot_type)
 count=0;
 for n=bottom:step:top
     count=count+1;
@@ -7,6 +7,7 @@ end
 
 %建立单元数组，开辟空间
 K_=cell(1,count);
+P_=cell(1,count);
 H_=zeros(1,count);
 C_=count;
 
@@ -89,17 +90,25 @@ for H1_=bottom:step:top
     sys_d = c2d(sys_c, Ts);
     %判断可控性
 if (rank(ctrb(sys_d.A,sys_d.B))==xNum)    
-    temp=dlqr(sys_d.A,sys_d.B,lqr_Q,lqr_R);
-    cell_temp = cell(1,1);
+    [tempK,tempP,cls]=dlqr(sys_d.A,sys_d.B,lqr_Q,lqr_R);
+    cell_tempK = cell(1,1);
     for i = 1:uNum
         for j = 1:xNum
-            cell_temp{1}(i, j) = temp(i, j);
+            cell_tempK{1}(i, j) = tempK(i, j);
         end
     end
-    K_(1,m)=cell_temp;
+    K_(1,m)=cell_tempK;
+    cell_tempP = cell(1,1);
+    for i = 1:xNum
+        for j = 1:xNum
+            cell_tempP{1}(i,j) = tempP(i, j);
+        end
+    end
+    P_(1,m)=cell_tempP;
     H_(1,m)=H1_;
 else
-    K_(1,m)=0;
+    K_(1,m)=cell(1,1);
+    P_(1,m)=cell(1,1);
     H_(1,m)=H1_;
     disp('Uncontrollable!');
 end

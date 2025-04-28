@@ -35,7 +35,7 @@ for j=1:1:x_num
     end
 end
 
-fprintf("A矩阵\n{");
+fprintf("double model_A[4*10*10]={\n");
 for j=1:1:x_num
     for k=1:1:x_num
         for i = C_s:-1:1
@@ -59,9 +59,9 @@ for j=1:1:x_num
         % disp(cH);
     end
 end
-fprintf("}\n");
+fprintf("};\n");
 
-fprintf("B矩阵\n{");
+fprintf("double model_B[4*10*4]={\n");
 for j=1:1:x_num
     for k=1:1:u_num
         for i = C_s:-1:1
@@ -71,4 +71,4 @@ for j=1:1:x_num
         fprintf(sprintf("%d,%d,%d,%d,\n",F(4),F(3),F(2),F(1)));%打印低次项在前
     end
 end
-fprintf("}\n");
+fprintf("};\n");

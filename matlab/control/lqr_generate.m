@@ -135,13 +135,13 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
     lqr_Q(6,6) = rho + 0.05;
     lqr_Q(7,7) = rho + 0.5;
     lqr_Q(8,8) = rho + 0.05;
-    lqr_Q(9,9) = rho + 5000;
+    lqr_Q(9,9) = rho + 3500;
     lqr_Q(10,10) = rho + 0.05;
 
-    lqr_R(1,1) = rho + 7;
-    lqr_R(2,2) = rho + 7;
-    lqr_R(3,3) = rho + 1;
-    lqr_R(4,4) = rho + 1;
+    lqr_R(1,1) = rho + 12;
+    lqr_R(2,2) = rho + 12;
+    lqr_R(3,3) = rho + 2;
+    lqr_R(4,4) = rho + 2;
     
     K=dlqr(sys_d.A,sys_d.B,lqr_Q,lqr_R);
 else

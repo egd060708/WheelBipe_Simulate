@@ -2,7 +2,7 @@
 clc;
 clear;
 
-Ts = 0.002;%离散时间
+Ts = 0.005;%离散时间
 
 % 获取当前脚本的完整路径
 currentFile = mfilename('fullpath');
@@ -117,26 +117,26 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
     % lqr_Q(6,6) = 0.05;
     % lqr_Q(7,7) = 0.5;
     % lqr_Q(8,8) = 0.05;
-    % lqr_Q(9,9) = 30000;
+    % lqr_Q(9,9) = 20000;
     % lqr_Q(10,10) = 0.5;
     % 
-    % lqr_R(1,1) = 4;
-    % lqr_R(2,2) = 4;
-    % lqr_R(3,3) = 0.5;
-    % lqr_R(4,4) = 0.5;
+    % lqr_R(1,1) = 7;
+    % lqr_R(2,2) = 7;
+    % lqr_R(3,3) = 1;
+    % lqr_R(4,4) = 1;
 
     %调试mpc参数
     rho = 0.;
     lqr_Q(1,1) = rho + 0.00001;
-    lqr_Q(2,2) = rho + 50;
+    lqr_Q(2,2) = rho + 100;
     lqr_Q(3,3) = rho + 0.00001;
     lqr_Q(4,4) = rho + 25;
-    lqr_Q(5,5) = rho + 0.5;
-    lqr_Q(6,6) = rho + 0.05;
-    lqr_Q(7,7) = rho + 0.5;
-    lqr_Q(8,8) = rho + 0.05;
-    lqr_Q(9,9) = rho + 3500;
-    lqr_Q(10,10) = rho + 0.05;
+    lqr_Q(5,5) = rho + 500;
+    lqr_Q(6,6) = rho + 1.;
+    lqr_Q(7,7) = rho + 500;
+    lqr_Q(8,8) = rho + 1.;
+    lqr_Q(9,9) = rho + 5000;
+    lqr_Q(10,10) = rho + 0.5;
 
     lqr_R(1,1) = rho + 12;
     lqr_R(2,2) = rho + 12;

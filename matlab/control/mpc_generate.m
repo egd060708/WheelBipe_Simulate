@@ -67,6 +67,17 @@ for j=1:1:x_num
         for i = C_s:-1:1
             Y(i) = B(j,k,i);
         end
+        % figure;
+        % scatter(H_s, Y, 40, 'b', 'filled');  % 'filled'表示填充点
+        % title('参数散点图');
+        % xlabel('h');
+        % ylabel('p');
+        % grid on;
+        % hold on;
+        % coefficients = polyfit(H_s, Y, 3);
+        % fittedY = polyval(coefficients, H_s);
+        % plot(H_s, fittedY, 'r-', 'LineWidth', 2);
+
         F = fit_feedback(H_s,Y,3);
         fprintf(sprintf("%d,%d,%d,%d,\n",F(4),F(3),F(2),F(1)));%打印低次项在前
     end

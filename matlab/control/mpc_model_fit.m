@@ -83,6 +83,7 @@ for H1_=bottom:step:top
             end
         end
     end
+    % disp(lqr_B);
     lqr_C = eye(xNum);
     lqr_D = zeros(xNum,uNum);
     sys_c = ss(lqr_A,lqr_B,lqr_C,lqr_D);

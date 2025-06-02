@@ -2,7 +2,7 @@
 clc;
 clear;
 
-Ts = 0.005;%离散时间
+Ts = 0.002;%离散时间
 
 % 获取当前脚本的完整路径
 currentFile = mfilename('fullpath');
@@ -126,22 +126,39 @@ if (rank(ctrb(sys_d.A,sys_d.B))==10)
     % lqr_R(4,4) = 1;
 
     %调试mpc参数
-    rho = 0.;
-    lqr_Q(1,1) = rho + 0.00001;
-    lqr_Q(2,2) = rho + 100;
-    lqr_Q(3,3) = rho + 0.00001;
-    lqr_Q(4,4) = rho + 25;
-    lqr_Q(5,5) = rho + 500;
-    lqr_Q(6,6) = rho + 1.;
-    lqr_Q(7,7) = rho + 500;
-    lqr_Q(8,8) = rho + 1.;
-    lqr_Q(9,9) = rho + 5000;
-    lqr_Q(10,10) = rho + 0.5;
+    % rho = 0.;
+    % lqr_Q(1,1) = rho + 0.00001;
+    % lqr_Q(2,2) = rho + 100;
+    % lqr_Q(3,3) = rho + 0.00001;
+    % lqr_Q(4,4) = rho + 25;
+    % lqr_Q(5,5) = rho + 200;
+    % lqr_Q(6,6) = rho + 1.;
+    % lqr_Q(7,7) = rho + 200;
+    % lqr_Q(8,8) = rho + 1.;
+    % lqr_Q(9,9) = rho + 10000;
+    % lqr_Q(10,10) = rho + 0.5;
+    % 
+    % lqr_R(1,1) = rho + 10;
+    % lqr_R(2,2) = rho + 10;
+    % lqr_R(3,3) = rho + 1;
+    % lqr_R(4,4) = rho + 1;
 
-    lqr_R(1,1) = rho + 12;
-    lqr_R(2,2) = rho + 12;
-    lqr_R(3,3) = rho + 2;
-    lqr_R(4,4) = rho + 2;
+    %实车
+    lqr_Q(1,1) =   0.00000000000000001;
+    lqr_Q(2,2) =   80;
+    lqr_Q(3,3) =   0.2;
+    lqr_Q(4,4) =   5;
+    lqr_Q(5,5) =   400;
+    lqr_Q(6,6) =   3;
+    lqr_Q(7,7) =   400;
+    lqr_Q(8,8) =   3;
+    lqr_Q(9,9) =   8000;
+    lqr_Q(10,10) = 1.7;
+
+    lqr_R(1,1) = 3;
+    lqr_R(2,2) = 3;
+    lqr_R(3,3) = 0.1;
+    lqr_R(4,4) = 0.1;
     
     K=dlqr(sys_d.A,sys_d.B,lqr_Q,lqr_R);
 else
@@ -170,7 +187,7 @@ uNum = size(lqr_R,2);%获取列数，也就是输入变量个数
 Kp = cell(uNum,xNum);%构建参数元组
 Pp = cell(xNum,xNum);
 
-fprintf("double model_K[4*4*10]={\n");
+fprintf("MPCFloat model_K[4*4*10]={\n");
 for j=1:1:uNum
     for k=1:1:xNum
         for i=C_s:-1:1
@@ -182,7 +199,7 @@ for j=1:1:uNum
     end
 end
 fprintf("};\n");
-fprintf("double model_P[4*10*10]={\n");
+fprintf("MPCFloat model_P[4*10*10]={\n");
 for j=1:1:xNum
     for k=1:1:xNum
         for i=C_s:-1:1

@@ -11,7 +11,7 @@ h_top=0.4;
 h_bottom=0.13;
 h_step=0.01;
 % Ts = 0.005;%qpOASES
-Ts = 0.005;%tinyMPC
+Ts = 0.002;%tinyMPC
 % Ts = 0.005;%qp++
 robot_type = 1;
 
@@ -35,7 +35,7 @@ for j=1:1:x_num
     end
 end
 
-fprintf("double model_A[4*10*10]={\n");
+fprintf("MPCFloat model_A[4*10*10]={\n");
 for j=1:1:x_num
     for k=1:1:x_num
         for i = C_s:-1:1
@@ -61,7 +61,7 @@ for j=1:1:x_num
 end
 fprintf("};\n");
 
-fprintf("double model_B[4*10*4]={\n");
+fprintf("MPCFloat model_B[4*10*4]={\n");
 for j=1:1:x_num
     for k=1:1:u_num
         for i = C_s:-1:1
